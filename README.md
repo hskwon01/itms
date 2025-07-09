@@ -72,7 +72,6 @@ CREATE TABLE users (
     level INT NOT NULL DEFAULT 1,
     is_verified BOOLEAN NOT NULL DEFAULT FALSE,
     verification_token VARCHAR(255),
-    company VARCHAR(100),
     user_master_id INT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
