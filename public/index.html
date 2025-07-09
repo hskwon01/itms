@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ITMS 게시판</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="app">
+        <header>
+            <h1>ITMS 게시판</h1>
+            <div id="user-info" style="display: none;">
+                <span id="username"></span>
+                <span id="user-role"></span>
+                <button onclick="logout()">로그아웃</button>
+            </div>
+        </header>
+
+        <main>
+            <!-- 로그인/회원가입 폼 -->
+            <div id="auth-section">
+                <div id="login-form">
+                    <h2>로그인</h2>
+                    <form onsubmit="login(event)">
+                        <input type="text" id="login-username" placeholder="사용자명" required>
+                        <input type="password" id="login-password" placeholder="비밀번호" required>
+                        <button type="submit">로그인</button>
+                    </form>
+                    <button onclick="showRegister()">회원가입</button>
+                </div>
+
+                <div id="register-form" style="display: none;">
+                    <h2>회원가입</h2>
+                    <form onsubmit="register(event)">
+                        <input type="text" id="reg-username" placeholder="사용자명" required>
+                        <input type="password" id="reg-password" placeholder="비밀번호" required>
+                        <input type="email" id="reg-email" placeholder="이메일" required>
+                        <select id="reg-role" required onchange="toggleUserMasterField()">
+                            <option value="">역할 선택</option>
+                            <option value="user">User</option>
+                            <option value="engineer">Engineer</option>
+                            <option value="user_master">User Master</option>
+                            <option value="super_admin">Super Admin</option>
+                        </select>
+                        <div id="user-master-field" style="display: none;">
+                            <input type="text" id="reg-user-master" placeholder="User Master 계정 입력">
+                        </div>
+                        <input type="number" id="reg-level" placeholder="레벨 (1-3)" min="1" max="3">
+                        <button type="submit">회원가입</button>
+                    </form>
+                    <button onclick="showLogin()">로그인으로</button>
+                </div>
+            </div>
+
+            <!-- 대시보드 -->
+            <div id="dashboard" style="display: none;">
+                <h2>대시보드</h2>
+                <div id="dashboard-content"></div>
+                
+                <div class="section">
+                    <h3>프로젝트 관리</h3>
+                    <button onclick="showProjectForm()">새 프로젝트 생성</button>
+                    <div id="projects-list"></div>
+                </div>
+
+                <div class="section">
+                    <h3>티켓 관리</h3>
+                    <button onclick="showTicketForm()">새 티켓 생성</button>
+                    <div id="tickets-list"></div>
+                </div>
+            </div>
+
+            <!-- 제품정보 섹션 -->
+            <div id="productinfo-section" class="section" style="display:none;">
+                <h3>제품정보 관리</h3>
+                <div id="productinfo-list"></div>
+            </div>
+
+            <!-- 파일 업로드 섹션 -->
+            <div id="file-section" class="section" style="display:none;">
+                <h3>파일 업로드</h3>
+                <form onsubmit="uploadFile(event)">
+                    <input type="file" id="file-upload-input" required>
+                    <button type="submit">업로드</button>
+                </form>
+                <div id="file-list"></div>
+            </div>
+
+            <!-- 알림 섹션 -->
+            <div id="notification-section" class="section" style="display:none;">
+                <h3>알림</h3>
+                <div id="notification-list"></div>
+            </div>
+
+            <!-- 승인 관리 섹션 -->
+            <div id="approval-section" class="section" style="display:none;">
+                <h3>승인 관리</h3>
+                <div id="pending-approvals-list"></div>
+            </div>
+
+            <!-- 프로젝트 생성 폼 -->
+            <div id="project-form" style="display: none;">
+                <h3>프로젝트 생성</h3>
+                <form onsubmit="createProject(event)">
+                    <input type="text" id="project-name" placeholder="프로젝트명" required>
+                    <input type="text" id="project-code" placeholder="프로젝트 코드" required>
+                    <textarea id="project-description" placeholder="프로젝트 설명"></textarea>
+                    <button type="submit">생성</button>
+                    <button type="button" onclick="hideProjectForm()">취소</button>
+                </form>
+            </div>
+
+            <!-- 티켓 생성 폼 -->
+            <div id="ticket-form" style="display: none;">
+                <h3>티켓 생성</h3>
+                <form onsubmit="createTicket(event)">
+                    <select id="ticket-project" required>
+                        <option value="">프로젝트 선택</option>
+                    </select>
+                    <input type="text" id="ticket-title" placeholder="티켓 제목" required>
+                    <select id="ticket-issue-type" required>
+                        <option value="">이슈 타입</option>
+                        <option value="기술지원">기술지원</option>
+                        <option value="신규개발">신규개발</option>
+                        <option value="분석요청">분석요청</option>
+                        <option value="튜닝요청">튜닝요청</option>
+                        <option value="기능개선">기능개선</option>
+                    </select>
+                    <select id="ticket-severity" required>
+                        <option value="">심각도</option>
+                        <option value="Critical">Critical</option>
+                        <option value="High">High</option>
+                        <option value="Middle">Middle</option>
+                        <option value="Low">Low</option>
+                    </select>
+                    <textarea id="ticket-description" placeholder="요청 본문" required></textarea>
+                    <input type="text" id="ticket-product-name" placeholder="제품명">
+                    <input type="text" id="ticket-product-version" placeholder="버전">
+                    <input type="text" id="ticket-os-info" placeholder="OS 정보">
+                    <input type="text" id="ticket-fix-level" placeholder="Fix level">
+                    <input type="date" id="ticket-end-date" placeholder="종료 요청 날짜">
+                    <button type="submit">생성</button>
+                    <button type="button" onclick="hideTicketForm()">취소</button>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
